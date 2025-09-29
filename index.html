@@ -1,1 +1,308 @@
-AnnaAi.app Now
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnnaAI - 一个绝对保秘的心理治疗师</title>
+    <style>
+        :root {
+            --olive: #7b6c3a;
+            --slate: #5f6f87;
+            --blue: #2f6da5;
+            --silver: #9fb2bd;
+            --umber: #6a5232;
+            --sand: #e7dc9c;
+            --sage: #d6e1d4;
+            --eggshell: #f4f3e3;
+            --ivory: #f7f4dd;
+            --outline: #cdd6e3;
+            --text-primary: #2e3642;
+            --text-secondary: #5d6470;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--eggshell);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header,
+        main,
+        footer {
+            width: min(1100px, 100% - clamp(32px, 8vw, 120px));
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: clamp(32px, 6vw, 72px);
+            margin-bottom: clamp(48px, 10vw, 96px);
+        }
+
+        .logo {
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 1rem;
+            color: var(--slate);
+        }
+
+        .badge {
+            padding: 0.35rem 0.75rem;
+            border: 1px solid var(--slate);
+            border-radius: 999px;
+            font-size: 0.8rem;
+            color: var(--slate);
+        }
+
+        main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: clamp(32px, 6vw, 80px);
+            flex: 1;
+            padding-bottom: clamp(48px, 10vw, 120px);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.75rem;
+            max-width: 460px;
+        }
+
+        .slogan-label {
+            margin: 0;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6em;
+            color: var(--slate);
+        }
+
+        .brand-name {
+            margin: 0;
+            font-size: clamp(2.8rem, 6vw, 3.6rem);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .slogan {
+            margin: 0;
+            font-size: clamp(1.5rem, 3.6vw, 1.95rem);
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+
+        .description {
+            margin: 0;
+            line-height: 1.85;
+            color: var(--text-secondary);
+            max-width: 36ch;
+        }
+
+        .cta-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .cta-input {
+            width: min(100%, 380px);
+            padding: 0.9rem 1.1rem;
+            font-size: 1rem;
+            background-color: var(--ivory);
+            border: 1px solid var(--outline);
+            border-radius: 10px;
+            color: var(--text-primary);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .cta-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        .cta-input:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(47, 109, 165, 0.15);
+        }
+
+        .cta-button {
+            padding: 0.95rem 1.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: var(--blue);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .cta-button:hover,
+        .cta-button:focus {
+            background-color: #295985;
+        }
+
+        .cta-button:focus-visible {
+            outline: 2px solid #295985;
+            outline-offset: 3px;
+        }
+
+        .visual-cluster {
+            position: relative;
+            width: clamp(260px, 32vw, 340px);
+            height: clamp(260px, 32vw, 340px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .bubble--1 {
+            width: 180px;
+            height: 180px;
+            background-color: var(--sage);
+            top: 14%;
+            left: 10%;
+        }
+
+        .bubble--2 {
+            width: 140px;
+            height: 140px;
+            background-color: var(--blue);
+            top: 0;
+            right: 18%;
+        }
+
+        .bubble--3 {
+            width: 120px;
+            height: 120px;
+            background-color: var(--sand);
+            bottom: 18%;
+            right: 0;
+        }
+
+        .bubble--4 {
+            width: 150px;
+            height: 150px;
+            background-color: var(--slate);
+            bottom: 4%;
+            left: 6%;
+        }
+
+        .bubble--5 {
+            width: 90px;
+            height: 90px;
+            background-color: var(--silver);
+            top: 45%;
+            left: 38%;
+        }
+
+        .bubble--6 {
+            width: 220px;
+            height: 220px;
+            border: 6px solid var(--outline);
+            background-color: transparent;
+            top: 8%;
+            right: 6%;
+        }
+
+        footer {
+            padding-bottom: clamp(32px, 6vw, 72px);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 960px) {
+            header {
+                margin-bottom: clamp(32px, 8vw, 64px);
+            }
+
+            main {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .visual-cluster {
+                align-self: center;
+                margin-top: clamp(24px, 6vw, 48px);
+            }
+
+            .cta-input,
+            .cta-button {
+                width: 100%;
+            }
+
+            .cta-button {
+                text-align: center;
+            }
+
+            footer {
+                text-align: center;
+                width: min(640px, 100% - clamp(32px, 8vw, 120px));
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <span class="logo">AnnaAI</span>
+        <span class="badge">绝对保密
+        </span>
+    </header>
+
+    <main>
+        <section class="content">
+            <p class="slogan-label">Anna</p>
+            <h1 class="brand-name">安娜AI</h1>
+            <p class="slogan">一个绝对保密的心理治疗师。</p>
+            <p class="description">
+                邀请你把心里的难题交给值得信赖的伙伴。AnnaAI 以严密守护为前提，帮助你在安全、匿名的对话中听见自己。
+            </p>
+            <form class="cta-form" onsubmit="return false;">
+                <label for="question" class="sr-only">向 AnnaAI 提问</label>
+                <input id="question" type="text" class="cta-input" placeholder="在这里输入你想得到答案的问题…">
+                <button type="submit" class="cta-button">开始对话</button>
+            </form>
+        </section>
+
+        <aside class="visual-cluster" aria-hidden="true">
+            <span class="bubble bubble--1"></span>
+            <span class="bubble bubble--2"></span>
+            <span class="bubble bubble--3"></span>
+            <span class="bubble bubble--4"></span>
+            <span class="bubble bubble--5"></span>
+            <span class="bubble bubble--6"></span>
+        </aside>
+    </main>
+
+    <footer>
+        AnnaAI 不需要登录，不记录任何用户数据。安全感来自每一次被理解的瞬间。
+    </footer>
+
+</body>
+</html>
