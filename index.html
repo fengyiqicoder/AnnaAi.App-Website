@@ -19,10 +19,25 @@
             --outline: #cdd6e3;
             --text-primary: #2e3642;
             --text-secondary: #5d6470;
+            --space-0-5: 6px;
+            --space-1: 12px;
+            --space-2: 24px;
+            --space-3: 36px;
+            --space-4: 48px;
+            --space-5: 60px;
+            --space-6: 72px;
+            --space-7: 84px;
+            --space-8: 96px;
+            --space-9: 108px;
+            --space-10: 120px;
         }
 
         * {
             box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
@@ -33,12 +48,13 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            scroll-snap-type: y proximity;
         }
 
         header,
         main,
         footer {
-            width: min(1100px, 100% - clamp(32px, 8vw, 120px));
+            width: min(1080px, 100% - clamp(var(--space-2), 8vw, var(--space-10)));
             margin: 0 auto;
         }
 
@@ -46,8 +62,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-top: clamp(32px, 6vw, 72px);
-            margin-bottom: clamp(48px, 10vw, 96px);
+            padding-top: clamp(var(--space-2), 6vw, var(--space-6));
+            margin-bottom: clamp(var(--space-4), 10vw, var(--space-8));
         }
 
         .logo {
@@ -58,7 +74,7 @@
         }
 
         .badge {
-            padding: 0.35rem 0.75rem;
+            padding: var(--space-0-5) var(--space-1);
             border: 1px solid var(--slate);
             border-radius: 999px;
             font-size: 0.8rem;
@@ -69,16 +85,19 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: clamp(32px, 6vw, 80px);
+            gap: clamp(var(--space-2), 6vw, var(--space-6));
             flex: 1;
-            padding-bottom: clamp(48px, 10vw, 120px);
+            margin-bottom: clamp(144px, 20vh, 288px);
+            padding-top: clamp(var(--space-4), 8vw, var(--space-8));
+            padding-bottom: clamp(120px, 18vw, 240px);
+            scroll-snap-align: start;
         }
 
         .content {
             display: flex;
             flex-direction: column;
-            gap: 1.75rem;
-            max-width: 460px;
+            gap: var(--space-2);
+            max-width: 456px;
         }
 
         .slogan-label {
@@ -112,17 +131,17 @@
         .cta-form {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: var(--space-2);
             align-items: flex-start;
         }
 
         .cta-input {
-            width: min(100%, 380px);
-            padding: 0.9rem 1.1rem;
+            width: min(100%, 384px);
+            padding: var(--space-1) var(--space-2);
             font-size: 1rem;
             background-color: var(--ivory);
             border: 1px solid var(--outline);
-            border-radius: 10px;
+            border-radius: 12px;
             color: var(--text-primary);
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
@@ -139,13 +158,13 @@
         }
 
         .cta-button {
-            padding: 0.95rem 1.75rem;
+            padding: var(--space-1) var(--space-2);
             font-size: 1rem;
             font-weight: 600;
             color: #ffffff;
             background-color: var(--blue);
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             transition: background-color 0.2s ease;
         }
@@ -162,8 +181,8 @@
 
         .visual-cluster {
             position: relative;
-            width: clamp(260px, 32vw, 340px);
-            height: clamp(260px, 32vw, 340px);
+            width: clamp(264px, 32vw, 336px);
+            height: clamp(264px, 32vw, 336px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -172,6 +191,7 @@
         .bubble {
             position: absolute;
             border-radius: 50%;
+            will-change: transform;
         }
 
         .bubble--1 {
@@ -180,14 +200,16 @@
             background-color: var(--sage);
             top: 14%;
             left: 10%;
+            animation: floatY 6s ease-in-out infinite;
         }
 
         .bubble--2 {
-            width: 140px;
-            height: 140px;
+            width: 144px;
+            height: 144px;
             background-color: var(--blue);
             top: 0;
             right: 18%;
+            animation: drift 7s ease-in-out infinite 0.4s;
         }
 
         .bubble--3 {
@@ -196,42 +218,317 @@
             background-color: var(--sand);
             bottom: 18%;
             right: 0;
+            animation: floatX 8s ease-in-out infinite 0.2s;
         }
 
         .bubble--4 {
-            width: 150px;
-            height: 150px;
+            width: 156px;
+            height: 156px;
             background-color: var(--slate);
             bottom: 4%;
             left: 6%;
+            animation: bob 9s ease-in-out infinite 0.6s;
         }
 
         .bubble--5 {
-            width: 90px;
-            height: 90px;
+            width: 96px;
+            height: 96px;
             background-color: var(--silver);
             top: 45%;
             left: 38%;
+            animation: drift 6.5s ease-in-out infinite 0.3s;
         }
 
         .bubble--6 {
-            width: 220px;
-            height: 220px;
+            width: 216px;
+            height: 216px;
             border: 6px solid var(--outline);
             background-color: transparent;
             top: 8%;
             right: 6%;
+            animation: pulseRing 10s ease-in-out infinite;
+        }
+
+        @keyframes floatY {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes floatX {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(12px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(8px, -8px) scale(1.03); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        @keyframes bob {
+            0% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-12px) rotate(1deg); }
+            100% { transform: translateY(0) rotate(0); }
+        }
+
+        @keyframes pulseRing {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.04); opacity: .92; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         footer {
-            padding-bottom: clamp(32px, 6vw, 72px);
+            padding: clamp(96px, 12vh, 168px) 0;
             font-size: 0.85rem;
             color: var(--text-secondary);
+            scroll-snap-align: start;
+        }
+
+        /* Full-height section modules */
+        .full-section {
+            min-height: 100svh;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            scroll-snap-align: start;
+        }
+
+        .section-inner {
+            width: min(1080px, 100% - clamp(var(--space-2), 8vw, var(--space-10)));
+            margin: 0 auto;
+        }
+
+        .section-title {
+            margin: 0 0 var(--space-3) 0;
+            font-size: clamp(1.5rem, 1.2rem + 0.8vw, 2rem);
+            letter-spacing: 0.04em;
+            color: var(--text-primary);
+        }
+
+        /* Live chat demo */
+        .live-demo {
+            /* 更明快的暖色-浅色对比渐变 */
+            background: linear-gradient(135deg, #fdf7ec 0%, #eef6ff 100%);
+        }
+        .live-demo .section-title { color: var(--text-primary); }
+
+        /* Two-column demo layout */
+        .demo-grid {
+            display: grid;
+            grid-template-columns: minmax(320px, 1fr) minmax(420px, 1.2fr);
+            gap: var(--space-3);
+            align-items: stretch;
+        }
+
+        .topic-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: var(--space-2);
+            align-self: stretch;
+        }
+
+        .topic { display: block; }
+
+        .topic-btn {
+            background: #ffffff;
+            border: 1px solid var(--outline);
+            border-radius: 12px;
+            padding: var(--space-2);
+            text-align: left;
+            cursor: pointer;
+            width: 100%;
+            color: var(--text-primary);
+            transition: background-color .15s ease, border-color .15s ease, transform .15s ease;
+        }
+
+        .topic-btn:hover,
+        .topic-btn:focus-visible {
+            outline: none;
+            border-color: var(--blue);
+            background: #f9fbff;
+            transform: translateY(-1px);
+        }
+
+        .topic-btn[aria-selected="true"] {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(47, 109, 165, 0.15);
+            background: #ffffff;
+        }
+
+        .topic-title {
+            margin: 0 0 var(--space-0-5) 0;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+        }
+
+        .topic-desc {
+            margin: 0;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .chat-frame {
+            width: 100%;
+            max-width: 720px;
+            margin: 0 0 0 auto;
+            background: #fff;
+            border: 1px solid var(--outline);
+            border-radius: 12px;
+            padding: var(--space-2);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            align-self: stretch;
+        }
+
+        .chat-messages {
+            flex: 1;
+            min-height: 320px;
+            max-height: none;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        /* 增加该部分上下内边距，保证背景覆盖和视觉呼吸感 */
+        .live-demo .section-inner {
+            padding: clamp(var(--space-7), 12vh, var(--space-10)) 0;
+        }
+
+        .chat-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+
+        .msg {
+            display: inline-block;
+            max-width: 80%;
+            padding: var(--space-1) var(--space-2);
+            border-radius: 12px;
+            line-height: 1.6;
+            opacity: 0;
+            transform: translateY(6px);
+            animation: msgIn 600ms ease forwards;
+        }
+
+        .chat-input {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: var(--space-1);
+            border-top: 1px solid var(--outline);
+            padding-top: var(--space-1);
+        }
+
+        .chat-input-field {
+            width: 100%;
+            padding: var(--space-1) var(--space-2);
+            border: 1px solid var(--outline);
+            border-radius: 12px;
+            background: var(--ivory);
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .chat-input-field::placeholder { color: var(--text-secondary); opacity: .8; }
+
+        .send-button {
+            padding: var(--space-1) var(--space-2);
+            background: var(--blue);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color .2s ease;
+        }
+
+        .send-button:hover, .send-button:focus { background-color: #295985; }
+
+        .msg--ai {
+            background: var(--ivory);
+            border: 1px solid var(--outline);
+            color: var(--text-primary);
+        }
+
+        .msg--user {
+            background: var(--blue);
+            color: #fff;
+            margin-left: auto;
+        }
+
+        @keyframes msgIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stagger message animation */
+        .chat-list .msg:nth-child(1) { animation-delay: .1s; }
+        .chat-list .msg:nth-child(2) { animation-delay: .35s; }
+        .chat-list .msg:nth-child(3) { animation-delay: .6s; }
+        .chat-list .msg:nth-child(4) { animation-delay: .85s; }
+        .chat-list .msg:nth-child(5) { animation-delay: 1.1s; }
+        .chat-list .msg:nth-child(6) { animation-delay: 1.35s; }
+
+        /* Testimonials */
+        .testimonials {
+            background-color: var(--sage);
+        }
+
+        .review-track {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-2);
+        }
+
+        .review-card {
+            background: #fff;
+            border: 1px solid var(--outline);
+            border-radius: 12px;
+            padding: var(--space-2);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+
+        .review-text {
+            margin: 0;
+            color: var(--text-primary);
+            line-height: 1.75;
+        }
+
+        .review-meta {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive tweaks for demo layout */
+        @media (max-width: 960px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chat-frame {
+                margin: 0;
+            }
         }
 
         @media (max-width: 960px) {
             header {
-                margin-bottom: clamp(32px, 8vw, 64px);
+                margin-bottom: clamp(var(--space-3), 8vw, var(--space-6));
             }
 
             main {
@@ -241,7 +538,7 @@
 
             .visual-cluster {
                 align-self: center;
-                margin-top: clamp(24px, 6vw, 48px);
+                margin-top: clamp(var(--space-2), 6vw, var(--space-4));
             }
 
             .cta-input,
@@ -255,7 +552,29 @@
 
             footer {
                 text-align: center;
-                width: min(640px, 100% - clamp(32px, 8vw, 120px));
+                width: min(648px, 100% - clamp(var(--space-2), 8vw, var(--space-10)));
+            }
+        }
+
+        @media (min-width: 961px) {
+            body {
+                justify-content: center;
+                gap: 0;
+                padding: 0;
+            }
+
+            header {
+                padding-top: 0;
+                margin-bottom: 0;
+            }
+
+            main {
+                flex: 0 0 auto;
+                padding-bottom: 0;
+            }
+
+            footer {
+                padding-bottom: 0;
             }
         }
 
@@ -298,9 +617,164 @@
         </aside>
     </main>
 
+    <section class="full-section live-demo" id="live-chat">
+        <div class="section-inner">
+            <h2 class="section-title">解答你的问题</h2>
+            <div class="demo-grid">
+                <ul class="topic-list" role="tablist" aria-label="常见困扰">
+                    <li class="topic" role="presentation">
+                        <button class="topic-btn" role="tab" aria-selected="true" aria-controls="reply-panel" data-reply="我听见你在描述一种长时间的情感透支。先别急着做最终决定，我们可以把当前的关系状态拆成“相处方式 / 冲突触发点 / 边界与期待”三部分逐一梳理。通常当我们看清哪些是可以调整的、哪些是需要谈判的，压迫感就会下降。你更愿意先从哪一部分开始？"> 
+                            <p class="topic-title">感情困扰</p>
+                            <p class="topic-desc">“我和妻子相处越来越像室友，既怕提离婚又怕继续耗下去，我该怎么处理这种情感疲惫感？”</p>
+                        </button>
+                    </li>
+                    <li class="topic" role="presentation">
+                        <button class="topic-btn" role="tab" aria-selected="false" aria-controls="reply-panel" data-reply="你背负了多重责任，难怪会持续紧张。我们可以做一个三步减压：1）把无法立即改变的项与可行动项区分开；2）为可行动项设定最小动作与最差情景预案；3）在每天固定时段做5分钟的‘担忧时间’，其余时间把担忧临时寄存。愿意先列出你最担心的前三项吗？">
+                            <p class="topic-title">经济压力</p>
+                            <p class="topic-desc">“房贷、孩子教育和父母养老都压在我身上，每天都想着‘如果哪天失业怎么办’，这种持续焦虑能缓解吗？”</p>
+                        </button>
+                    </li>
+                    <li class="topic" role="presentation">
+                        <button class="topic-btn" role="tab" aria-selected="false" aria-controls="reply-panel" data-reply="当‘意义感’降低时，人会本能地怀疑一切。我们可以先从‘当下带来一点点活力的事情’入手，哪怕是十分之一个单位。接着回顾你这些年做成的三件微小但真实的事，把它们连接到你在乎的价值。等你准备好，我们再探索下一小步。">
+                            <p class="topic-title">意义迷茫</p>
+                            <p class="topic-desc">“工作十几年后发现自己除了赚钱好像什么都没有留下，我常问自己‘活着到底是为了什么’，这种空虚感正常吗？”</p>
+                        </button>
+                    </li>
+                    <li class="topic" role="presentation">
+                        <button class="topic-btn" role="tab" aria-selected="false" aria-controls="reply-panel" data-reply="孤独并不等于‘你有问题’，它更像是一种需要被照顾的信号。我们可以先尝试两条轻量路径：一是把‘独处时间’从被动变为主动，安排一个你能享受的小仪式；二是练习‘一小步连接’，例如给一位可信的人发一句近况。等你愿意，我们也可以一起找到更稳定的连接方式。现在，对你来说最容易开始的是哪一小步？">
+                            <p class="topic-title">孤独感</p>
+                            <p class="topic-desc">“明明身边有同事朋友，但下班回家就很空，越发觉得没人真正懂我。这样的孤独感怎么办？”</p>
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="chat-frame" role="tabpanel" id="reply-panel" aria-live="polite" aria-label="Anna 的回复">
+                    <div class="chat-messages">
+                        <ul class="chat-list" id="reply-list"></ul>
+                    </div>
+                    <form class="chat-input" id="chat-form" onsubmit="return false;">
+                        <input id="chat-question" class="chat-input-field" type="text" placeholder="你想问 Anna 什么？">
+                        <button class="send-button" id="send-button" type="submit">开始对话</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="full-section testimonials" id="testimonials">
+        <div class="section-inner">
+            <h2 class="section-title">用户评论</h2>
+            <div class="review-track">
+                <article class="review-card">
+                    <p class="review-text">像和懂心理的朋友聊天。每次聊完都更能听见自己。</p>
+                    <p class="review-meta">小林 · 产品经理</p>
+                </article>
+                <article class="review-card">
+                    <p class="review-text">我在这儿说出了从未敢说的话，没有被评判，只有被理解。</p>
+                    <p class="review-meta">J. Wang · 自由职业者</p>
+                </article>
+                <article class="review-card">
+                    <p class="review-text">节奏很温和，但又有方向感，真的能把复杂情绪拆开来看。</p>
+                    <p class="review-meta">Cynthia · 运营</p>
+                </article>
+                <article class="review-card">
+                    <p class="review-text">匿名感让我更安全。即使深夜，也有人在陪我。</p>
+                    <p class="review-meta">阿杰 · 学生</p>
+                </article>
+                <article class="review-card">
+                    <p class="review-text">比我想象的更细腻，会追问关键处，但始终很尊重边界。</p>
+                    <p class="review-meta">Mei · 设计师</p>
+                </article>
+                <article class="review-card">
+                    <p class="review-text">不是鸡汤式安慰，而是一步步帮我恢复掌控感。</p>
+                    <p class="review-meta">Leo · 创业者</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
     <footer>
         AnnaAI 不需要登录，不记录任何用户数据。安全感来自每一次被理解的瞬间。
     </footer>
+
+    <script>
+    (function() {
+        const listEl = document.getElementById('reply-list');
+        const tabs = document.querySelectorAll('.topic-btn');
+        const form = document.getElementById('chat-form');
+        const input = document.getElementById('chat-question');
+
+        let typingController = null;
+
+        function clearReplies() {
+            listEl.innerHTML = '';
+        }
+
+        function appendMessage(text, isAI) {
+            const li = document.createElement('li');
+            li.className = 'msg ' + (isAI ? 'msg--ai' : 'msg--user');
+            li.textContent = text;
+            listEl.appendChild(li);
+            listEl.parentElement.scrollTop = listEl.parentElement.scrollHeight;
+            return li;
+        }
+
+        async function typeStream(targetEl, fullText, chunk = 2, delay = 40) {
+            if (typingController) typingController.abort();
+            typingController = new AbortController();
+            const { signal } = typingController;
+
+            targetEl.textContent = '';
+            let i = 0;
+            while (i < fullText.length) {
+                if (signal.aborted) return;
+                targetEl.textContent += fullText.slice(i, i + chunk);
+                i += chunk;
+                await new Promise(r => setTimeout(r, delay));
+            }
+        }
+
+        function updatePressed(current) {
+            tabs.forEach(btn => btn.setAttribute('aria-selected', btn === current ? 'true' : 'false'));
+        }
+
+        tabs.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const reply = btn.getAttribute('data-reply') || '';
+                updatePressed(btn);
+                clearReplies();
+                // echo user question
+                const userDesc = btn.querySelector('.topic-desc')?.textContent?.trim() || '';
+                appendMessage(userDesc, false);
+                // streamed AI reply
+                const aiEl = appendMessage('', true);
+                typeStream(aiEl, reply);
+            });
+        });
+
+        // auto-init with first tab
+        const first = document.querySelector('.topic-btn[aria-selected="true"]');
+        if (first) first.click();
+
+        // IM 输入发送
+        function sanitized(text){
+            return text.replace(/\s+/g, ' ').trim();
+        }
+
+        async function handleSend(){
+            const q = sanitized(input.value);
+            if(!q) return;
+            appendMessage(q, false);
+            input.value = '';
+            const aiEl = appendMessage('', true);
+            const mock = '我已收到你的问题。先从可被描述的事实入手，再到你的感受与担心，最后一起找一个今天就能迈出的最小行动。';
+            await typeStream(aiEl, mock);
+        }
+
+        form?.addEventListener('submit', handleSend);
+        document.getElementById('send-button')?.addEventListener('click', handleSend);
+    })();
+    </script>
 
 </body>
 </html>
