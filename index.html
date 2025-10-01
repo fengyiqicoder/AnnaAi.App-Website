@@ -428,6 +428,7 @@
             padding: var(--space-1) var(--space-2);
             border-radius: 12px;
             line-height: 1.6;
+            white-space: pre-wrap;
             opacity: 0;
             transform: translateY(6px);
             animation: msgIn 600ms ease forwards;
@@ -435,7 +436,8 @@
 
         .chat-input {
             display: grid;
-            grid-template-columns: 1fr auto;
+            grid-template-columns: auto 1fr auto;
+            align-items: end;
             gap: var(--space-1);
             border-top: 1px solid var(--outline);
             padding-top: var(--space-1);
@@ -449,22 +451,48 @@
             background: var(--ivory);
             color: var(--text-primary);
             font-size: 1rem;
+            line-height: 1.6;
+            min-height: 44px;
+            max-height: 160px;
+            overflow-y: auto;
+            resize: none;
         }
 
         .chat-input-field::placeholder { color: var(--text-secondary); opacity: .8; }
 
         .send-button {
-            padding: var(--space-1) var(--space-2);
+            width: 44px;
+            height: 44px;
             background: var(--blue);
             color: #fff;
             border: none;
-            border-radius: 12px;
+            border-radius: 999px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color .2s ease;
+            display: grid;
+            place-items: center;
+            transition: background-color .2s ease, transform .1s ease;
         }
 
         .send-button:hover, .send-button:focus { background-color: #295985; }
+        .send-button:active { transform: scale(0.98); }
+
+        .chat-actions-left { display: flex; align-items: center; gap: var(--space-0-5); }
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid var(--outline);
+            color: var(--slate);
+            cursor: pointer;
+            transition: background-color .15s ease, border-color .15s ease, transform .1s ease;
+        }
+        .icon-btn:hover, .icon-btn:focus-visible { background: #f9fbff; border-color: var(--blue); outline: none; }
+        .icon-btn:active { transform: scale(0.98); }
+        .icon-btn svg { width: 18px; height: 18px; }
 
         .msg--ai {
             background: var(--ivory);
@@ -662,12 +690,26 @@
             footer {
                 padding-bottom: clamp(var(--space-3), 6vh, var(--space-7));
             }
+
+            /* 固定聊天面板最小与最大宽度（桌面端） */
+            .chat-frame {
+                width: clamp(420px, 52vw, 600px);
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 transition: none !important;
             }
+        }
+
+        /* 无障碍隐藏：保留给屏幕阅读器，不占布局 */
+        .sr-only {
+            position: absolute !important;
+            width: 1px; height: 1px;
+            padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0);
+            white-space: nowrap; border: 0;
         }
     </style>
 </head>
@@ -739,8 +781,30 @@
                         <ul class="chat-list" id="reply-list"></ul>
                     </div>
                     <form class="chat-input" id="chat-form" onsubmit="return false;">
-                        <input id="chat-question" class="chat-input-field" type="text" placeholder="你想问 Anna 什么？">
-                        <button class="send-button" id="send-button" type="submit">开始对话</button>
+                        <div class="chat-actions-left">
+                            <button type="button" class="icon-btn" title="上传">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                            </button>
+                            <button type="button" class="icon-btn" title="表情">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                                    <line x1="9" y1="9" x2="9.01" y2="9"/>
+                                    <line x1="15" y1="9" x2="15.01" y2="9"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <textarea id="chat-question" class="chat-input-field" rows="1" placeholder="你想问 Anna 什么？（Enter 发送，Shift+Enter 换行）"></textarea>
+                        <button class="send-button" id="send-button" type="submit" aria-label="发送">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -846,10 +910,27 @@
             if(!q) return;
             appendMessage(q, false);
             input.value = '';
+            autoGrow(input);
             const aiEl = appendMessage('', true);
             const mock = '我已收到你的问题。先从可被描述的事实入手，再到你的感受与担心，最后一起找一个今天就能迈出的最小行动。';
             await typeStream(aiEl, mock);
         }
+
+        function autoGrow(el){
+            if(!el) return;
+            el.style.height = 'auto';
+            const next = Math.min(160, Math.max(44, el.scrollHeight));
+            el.style.height = next + 'px';
+        }
+
+        // 支持 Enter 发送，Shift+Enter 换行
+        input?.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' && !e.shiftKey){
+                e.preventDefault();
+                handleSend();
+            }
+        });
+        input?.addEventListener('input', () => autoGrow(input));
 
         form?.addEventListener('submit', handleSend);
         document.getElementById('send-button')?.addEventListener('click', handleSend);
