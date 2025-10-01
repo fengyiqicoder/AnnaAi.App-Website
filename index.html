@@ -729,7 +729,7 @@
             <p class="description">
                 邀请你把心里的难题交给值得信赖的伙伴。AnnaAI 以严密守护为前提，帮助你在安全、匿名的对话中听见自己。
             </p>
-            <form class="cta-form" onsubmit="return false;">
+            <form class="cta-form" id="hero-cta-form" onsubmit="return false;">
                 <label for="question" class="sr-only">向 AnnaAI 提问</label>
                 <input id="question" type="text" class="cta-input" placeholder="在这里输入你想得到答案的问题…">
                 <button type="submit" class="cta-button">开始对话</button>
@@ -780,31 +780,10 @@
                     <div class="chat-messages">
                         <ul class="chat-list" id="reply-list"></ul>
                     </div>
-                    <form class="chat-input" id="chat-form" onsubmit="return false;">
-                        <div class="chat-actions-left">
-                            <button type="button" class="icon-btn" title="上传">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                    <polyline points="17 8 12 3 7 8"/>
-                                    <line x1="12" y1="3" x2="12" y2="15"/>
-                                </svg>
-                            </button>
-                            <button type="button" class="icon-btn" title="表情">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                                    <line x1="9" y1="9" x2="9.01" y2="9"/>
-                                    <line x1="15" y1="9" x2="15.01" y2="9"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <textarea id="chat-question" class="chat-input-field" rows="1" placeholder="你想问 Anna 什么？（Enter 发送，Shift+Enter 换行）"></textarea>
-                        <button class="send-button" id="send-button" type="submit" aria-label="发送">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <line x1="22" y1="2" x2="11" y2="13"/>
-                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                            </svg>
-                        </button>
+                    <form class="cta-form footer-cta" id="live-cta-form" onsubmit="return false;">
+                        <label for="live-cta-input" class="sr-only">向 AnnaAI 提问</label>
+                        <input id="live-cta-input" type="text" class="cta-input" placeholder="在这里输入你想得到答案的问题…">
+                        <button type="submit" class="cta-button" id="live-cta-button">开始对话</button>
                     </form>
                 </div>
             </div>
@@ -847,6 +826,15 @@
         const tabs = document.querySelectorAll('.topic-btn');
         const form = document.getElementById('chat-form');
         const input = document.getElementById('chat-question');
+
+        // Hero CTA elements
+        const heroForm = document.getElementById('hero-cta-form');
+        const heroInput = document.getElementById('question');
+
+        // Live CTA elements (统一与顶部行为)
+        const liveCtaForm = document.getElementById('live-cta-form');
+        const liveCtaInput = document.getElementById('live-cta-input');
+        const liveCtaBtn = document.getElementById('live-cta-button');
 
         let typingController = null;
 
@@ -896,9 +884,14 @@
             });
         });
 
-        // auto-init with first tab
-        const first = document.querySelector('.topic-btn[aria-selected="true"]');
-        if (first) first.click();
+        // auto-init with first tab (skip if landing here with q param)
+        (function(){
+            const hasQ = new URLSearchParams(window.location.search).get('q');
+            if (!hasQ) {
+                const first = document.querySelector('.topic-btn[aria-selected="true"]');
+                if (first) first.click();
+            }
+        })();
 
         // IM 输入发送
         function sanitized(text){
@@ -935,21 +928,36 @@
         form?.addEventListener('submit', handleSend);
         document.getElementById('send-button')?.addEventListener('click', handleSend);
 
-        // Footer quick start → proxy to live chat
+        // Footer quick start → jump to chat.html with message
         const footerForm = document.getElementById('footer-cta-form');
         const footerInput = document.getElementById('footer-chat-question');
         const footerSend = document.getElementById('footer-send-button');
+        function redirectToChat(text){
+            // 允许空输入也跳转
+            const q = (text ?? '').toString();
+            const query = q.trim() ? ('?q=' + encodeURIComponent(q.trim())) : '';
+            window.location.href = 'chat.html' + query;
+        }
         function handleFooterSend(){
-            const q = sanitized(footerInput?.value || '');
-            if(!q) return;
-            const liveInput = document.getElementById('chat-question');
-            if(liveInput) liveInput.value = q;
-            if(footerInput) footerInput.value = '';
-            document.getElementById('live-chat')?.scrollIntoView({ behavior: 'smooth' });
-            handleSend();
+            redirectToChat(footerInput?.value || '');
         }
         footerForm?.addEventListener('submit', handleFooterSend);
         footerSend?.addEventListener('click', handleFooterSend);
+
+        // Hero CTA → jump to chat.html with message
+        function handleHeroSend(){
+            redirectToChat(heroInput?.value || '');
+        }
+        heroForm?.addEventListener('submit', function(e){ e.preventDefault(); handleHeroSend(); });
+        // Also bind click on the hero button for robustness
+        heroForm?.querySelector('.cta-button')?.addEventListener('click', handleHeroSend);
+
+        // Live CTA → jump to chat.html with message
+        function handleLiveCtaSend(){
+            redirectToChat(liveCtaInput?.value || '');
+        }
+        liveCtaForm?.addEventListener('submit', function(e){ e.preventDefault(); handleLiveCtaSend(); });
+        liveCtaBtn?.addEventListener('click', handleLiveCtaSend);
     })();
 
     // Reviews carousel interactions
