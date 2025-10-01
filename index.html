@@ -70,6 +70,7 @@
             font-weight: 700;
             letter-spacing: 0.08em;
             font-size: 1rem;
+            margin-top: var(--space-1);
             color: var(--slate);
         }
 
@@ -78,6 +79,7 @@
             border: 1px solid var(--slate);
             border-radius: 999px;
             font-size: 0.8rem;
+            margin-top: var(--space-1);
             color: var(--slate);
         }
 
@@ -134,6 +136,16 @@
             gap: var(--space-2);
             align-items: flex-start;
         }
+
+        .footer-cta {
+            margin-bottom: var(--space-2);
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: var(--space-1);
+            align-items: center;
+        }
+        .footer-cta .cta-input { width: 100%; }
+        .footer-cta .cta-button { width: auto; }
 
         .cta-input {
             width: min(100%, 384px);
@@ -486,34 +498,108 @@
             background-color: var(--sage);
         }
 
+        /* Reviews carousel */
+        .review-carousel {
+            position: relative;
+            overflow: hidden;
+        }
+
         .review-track {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            display: flex;
             gap: var(--space-2);
+            transition: transform .4s ease;
+            will-change: transform;
         }
 
         .review-card {
-            background: #fff;
-            border: 1px solid var(--outline);
-            border-radius: 12px;
-            padding: var(--space-2);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-            display: flex;
-            flex-direction: column;
+            background: transparent;
+            border: none;
+            border-radius: 16px;
+            padding: calc(var(--space-2) + 4px) var(--space-3);
+            box-shadow: none;
+            display: grid;
+            grid-template-columns: 1fr;
             gap: var(--space-1);
+            position: relative;
+            min-height: 180px;
+            width: 100%;
         }
 
         .review-text {
             margin: 0;
             color: var(--text-primary);
-            line-height: 1.75;
+            line-height: 1.9;
+            font-size: clamp(1.15rem, 1.05rem + .4vw, 1.35rem);
+            font-weight: 700;
+            letter-spacing: .01em;
+            position: relative;
         }
 
         .review-meta {
             margin: 0;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            font-weight: 600;
         }
+
+        /* big quotes decoration */
+        .review-card::before,
+        .review-card::after {
+            content: '“';
+            position: absolute;
+            font-size: clamp(3.6rem, 3rem + 2vw, 6rem);
+            line-height: 1;
+            color: rgba(0,0,0,0.08);
+            pointer-events: none;
+            user-select: none;
+        }
+        .review-card::before {
+            top: -8px;
+            left: 12px;
+        }
+        .review-card::after {
+            content: '”';
+            right: 16px;
+            bottom: -16px;
+        }
+
+        .review-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--blue);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(47,109,165,0.25);
+            transition: transform .15s ease, box-shadow .15s ease, background-color .2s ease;
+        }
+        .review-arrow:hover,
+        .review-arrow:focus-visible {
+            transform: translateY(-50%) scale(1.06);
+            box-shadow: 0 10px 24px rgba(47,109,165,0.3);
+            outline: none;
+            background-color: #295985;
+        }
+        .review-arrow--prev { left: -2px; }
+        .review-arrow--next { right: -2px; }
+
+        /* responsive arrow offsets */
+        @media (max-width: 720px) {
+            .review-arrow--prev { left: 4px; }
+            .review-arrow--next { right: 4px; }
+            .review-arrow { width: 40px; height: 40px; }
+        }
+
+        /* one-card per view; constrain width */
+        #review-track { width: 100%; }
+        .review-carousel { max-width: 720px; margin: 0 auto; }
+        .review-track > .review-card { flex: 0 0 100%; }
 
         /* Responsive tweaks for demo layout */
         @media (max-width: 960px) {
@@ -574,7 +660,7 @@
             }
 
             footer {
-                padding-bottom: 0;
+                padding-bottom: clamp(var(--space-3), 6vh, var(--space-7));
             }
         }
 
@@ -664,36 +750,30 @@
     <section class="full-section testimonials" id="testimonials">
         <div class="section-inner">
             <h2 class="section-title">用户评论</h2>
-            <div class="review-track">
-                <article class="review-card">
-                    <p class="review-text">像和懂心理的朋友聊天。每次聊完都更能听见自己。</p>
-                    <p class="review-meta">小林 · 产品经理</p>
-                </article>
-                <article class="review-card">
-                    <p class="review-text">我在这儿说出了从未敢说的话，没有被评判，只有被理解。</p>
-                    <p class="review-meta">J. Wang · 自由职业者</p>
-                </article>
-                <article class="review-card">
-                    <p class="review-text">节奏很温和，但又有方向感，真的能把复杂情绪拆开来看。</p>
-                    <p class="review-meta">Cynthia · 运营</p>
-                </article>
-                <article class="review-card">
-                    <p class="review-text">匿名感让我更安全。即使深夜，也有人在陪我。</p>
-                    <p class="review-meta">阿杰 · 学生</p>
-                </article>
-                <article class="review-card">
-                    <p class="review-text">比我想象的更细腻，会追问关键处，但始终很尊重边界。</p>
-                    <p class="review-meta">Mei · 设计师</p>
-                </article>
-                <article class="review-card">
-                    <p class="review-text">不是鸡汤式安慰，而是一步步帮我恢复掌控感。</p>
-                    <p class="review-meta">Leo · 创业者</p>
-                </article>
+            <div class="review-carousel">
+                <div class="review-track" id="review-track">
+                    <article class="review-card">
+                        <p class="review-text">像和懂心理的朋友聊天。每次聊完都更能听见自己。</p>
+                        <p class="review-meta">小林 · 产品经理</p>
+                    </article>
+                    <article class="review-card">
+                        <p class="review-text">我在这儿说出了从未敢说的话，没有被评判，只有被理解。</p>
+                        <p class="review-meta">J. Wang · 自由职业者</p>
+                    </article>
+                    <article class="review-card">
+                        <p class="review-text">节奏很温和，但又有方向感，真的能把复杂情绪拆开来看。</p>
+                        <p class="review-meta">Cynthia · 运营</p>
+                    </article>
+                </div>
             </div>
         </div>
     </section>
 
     <footer>
+        <form class="cta-form footer-cta" id="footer-cta-form" onsubmit="return false;">
+            <input id="footer-chat-question" class="cta-input" type="text" placeholder="在这里输入你想和 Anna 说的话…">
+            <button class="cta-button" id="footer-send-button" type="submit">开始对话</button>
+        </form>
         AnnaAI 不需要登录，不记录任何用户数据。安全感来自每一次被理解的瞬间。
     </footer>
 
@@ -773,6 +853,56 @@
 
         form?.addEventListener('submit', handleSend);
         document.getElementById('send-button')?.addEventListener('click', handleSend);
+
+        // Footer quick start → proxy to live chat
+        const footerForm = document.getElementById('footer-cta-form');
+        const footerInput = document.getElementById('footer-chat-question');
+        const footerSend = document.getElementById('footer-send-button');
+        function handleFooterSend(){
+            const q = sanitized(footerInput?.value || '');
+            if(!q) return;
+            const liveInput = document.getElementById('chat-question');
+            if(liveInput) liveInput.value = q;
+            if(footerInput) footerInput.value = '';
+            document.getElementById('live-chat')?.scrollIntoView({ behavior: 'smooth' });
+            handleSend();
+        }
+        footerForm?.addEventListener('submit', handleFooterSend);
+        footerSend?.addEventListener('click', handleFooterSend);
+    })();
+
+    // Reviews carousel interactions
+    (function(){
+        const track = document.getElementById('review-track');
+        if(!track) return;
+
+        const cards = Array.from(track.children);
+        const total = cards.length;
+        let index = 0;
+        let timer = null;
+
+        function update(){
+            const offset = -index * 100;
+            track.style.transform = `translateX(${offset}%)`;
+        }
+
+        function goNext(){ index = (index + 1) % total; update(); }
+
+        function startAuto(){
+            stopAuto();
+            timer = setInterval(goNext, 4000);
+        }
+        function stopAuto(){ if(timer) { clearInterval(timer); timer = null; } }
+
+        // Pause on hover for better UX
+        track.parentElement.addEventListener('mouseenter', stopAuto);
+        track.parentElement.addEventListener('mouseleave', startAuto);
+
+        // Resize correction to avoid fractional widths
+        window.addEventListener('resize', update);
+
+        update();
+        startAuto();
     })();
     </script>
 
