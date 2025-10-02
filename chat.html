@@ -91,6 +91,7 @@
             min-height: min(72vh, 840px);
             width: clamp(420px, 56vw, 600px);
             margin: 0 auto;
+            position: relative;
         }
 
         .chat-topbar {
@@ -112,6 +113,41 @@
         .subtitle {
             margin: 2px 0 0 0; color: var(--text-secondary); font-size: .9rem;
         }
+
+        /* 历史记录按钮与面板 */
+        .history-button {
+            margin-left: auto;
+            padding: var(--space-0-5) var(--space-1);
+            border: 1px solid var(--outline);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--slate);
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .history-button:hover, .history-button:focus {
+            background: var(--ivory);
+        }
+        .history-panel {
+            position: absolute;
+            top: var(--space-1);
+            right: var(--space-1);
+            width: clamp(240px, 36vw, 320px);
+            max-height: min(60vh, 480px);
+            overflow: auto;
+            background: #fff;
+            border: 1px solid var(--outline);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            display: none;
+            z-index: 10;
+        }
+        .history-panel[aria-hidden="false"] { display: block; }
+        .history-list { list-style: none; margin: 0; padding: var(--space-1); display: flex; flex-direction: column; gap: var(--space-0-5); }
+        .history-item { padding: var(--space-1); border-radius: 10px; border: 1px solid transparent; cursor: pointer; }
+        .history-item:hover { background: var(--ivory); border-color: var(--outline); }
+        .history-item--active { background: var(--sage); border-color: var(--outline); }
+        .history-empty { padding: var(--space-1); color: var(--text-secondary); }
 
         .chat-messages { flex: 1; overflow-y: auto; padding-right: 2px; }
         .chat-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
@@ -185,7 +221,14 @@
                     <p class="title">Anna</p>
                     <p class="subtitle">心理咨询</p>
                 </div>
+                <button id="history-btn" class="history-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="history-panel">聊天记录</button>
             </div>
+
+            <aside id="history-panel" class="history-panel" role="dialog" aria-hidden="true" aria-labelledby="history-title">
+                <h2 id="history-title" class="sr-only">聊天记录</h2>
+                <ul id="history-list" class="history-list" role="listbox" aria-label="历史会话列表"></ul>
+                <div id="history-empty" class="history-empty" style="display:none;">暂无历史记录</div>
+            </aside>
 
             <div class="chat-messages">
                 <ul class="chat-list" id="chat-list"></ul>
@@ -208,8 +251,128 @@
         const listEl = document.getElementById('chat-list');
         const formEl = document.getElementById('chat-form');
         const inputEl = document.getElementById('composer-input');
+        const historyBtn = document.getElementById('history-btn');
+        const historyPanelEl = document.getElementById('history-panel');
+        const historyListEl = document.getElementById('history-list');
+        const historyEmptyEl = document.getElementById('history-empty');
 
         let typingController = null;
+
+        const STORAGE_KEYS = {
+            sessions: 'anna.sessions',
+            currentId: 'anna.currentSessionId'
+        };
+
+        function loadSessions(){
+            try {
+                const raw = localStorage.getItem(STORAGE_KEYS.sessions);
+                const arr = raw ? JSON.parse(raw) : [];
+                return Array.isArray(arr) ? arr : [];
+            } catch(e){
+                return [];
+            }
+        }
+
+        function saveSessions(sessions){
+            try {
+                localStorage.setItem(STORAGE_KEYS.sessions, JSON.stringify(sessions || []));
+            } catch(e) { /* ignore */ }
+        }
+
+        function getCurrentSessionId(){
+            try { return localStorage.getItem(STORAGE_KEYS.currentId) || null; } catch(e){ return null; }
+        }
+
+        function setCurrentSessionId(id){
+            try { if (id) localStorage.setItem(STORAGE_KEYS.currentId, id); else localStorage.removeItem(STORAGE_KEYS.currentId); } catch(e) { /* ignore */ }
+        }
+
+        function findSessionById(sessions, id){
+            return sessions.find(s => s && s.id === id) || null;
+        }
+
+        function getLatestSessionId(sessions){
+            if (!sessions.length) return null;
+            const sorted = [...sessions].sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
+            return sorted[0].id;
+        }
+
+        function createNewSession(){
+            const id = String(Date.now());
+            return { id, title: '新的会话', messages: [], updatedAt: Date.now() };
+        }
+
+        function upsertSession(session){
+            const sessions = loadSessions();
+            const idx = sessions.findIndex(s => s.id === session.id);
+            if (idx >= 0) sessions[idx] = session; else sessions.push(session);
+            session.updatedAt = Date.now();
+            saveSessions(sessions);
+            renderHistoryList();
+        }
+
+        function ensureActiveSession(){
+            let sessions = loadSessions();
+            let currentId = getCurrentSessionId();
+            let session = currentId ? findSessionById(sessions, currentId) : null;
+            if (!session){
+                if (!sessions.length){
+                    session = createNewSession();
+                    sessions.push(session);
+                    saveSessions(sessions);
+                } else {
+                    const latestId = getLatestSessionId(sessions);
+                    session = findSessionById(sessions, latestId);
+                }
+                setCurrentSessionId(session.id);
+            }
+            return session;
+        }
+
+        function setSessionTitleIfEmpty(session, firstUserText){
+            if (!session.title || session.title === '新的会话'){
+                const t = (firstUserText || '').trim();
+                session.title = t ? (t.length > 16 ? t.slice(0,16) + '…' : t) : '会话';
+            }
+        }
+
+        function clearChat(){
+            listEl.innerHTML = '';
+        }
+
+        function renderSession(session){
+            clearChat();
+            (session.messages || []).forEach(m => {
+                appendMessage(m.text || '', m.role === 'ai');
+            });
+        }
+
+        function renderHistoryList(){
+            const sessions = loadSessions();
+            const currentId = getCurrentSessionId();
+            historyListEl.innerHTML = '';
+            historyEmptyEl.style.display = sessions.length ? 'none' : 'block';
+            const sorted = [...sessions].sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
+            sorted.forEach(s => {
+                const li = document.createElement('li');
+                li.className = 'history-item' + (s.id === currentId ? ' history-item--active' : '');
+                li.setAttribute('role','option');
+                li.dataset.id = s.id;
+                li.textContent = s.title || '未命名会话';
+                historyListEl.appendChild(li);
+            });
+        }
+
+        function openHistoryPanel(){
+            renderHistoryList();
+            historyPanelEl.setAttribute('aria-hidden','false');
+            historyBtn.setAttribute('aria-expanded','true');
+        }
+
+        function closeHistoryPanel(){
+            historyPanelEl.setAttribute('aria-hidden','true');
+            historyBtn.setAttribute('aria-expanded','false');
+        }
 
         function appendMessage(text, isAI){
             const li = document.createElement('li');
@@ -245,30 +408,113 @@
         async function handleSend(){
             const q = sanitized(inputEl.value);
             if(!q) return;
+
+            // 用户消息渲染
             appendMessage(q, false);
             inputEl.value = '';
+
+            // 确保会话并保存用户消息
+            const sessions = loadSessions();
+            let currentId = getCurrentSessionId();
+            let session = currentId ? findSessionById(sessions, currentId) : null;
+            if (!session){
+                const newSession = createNewSession();
+                setSessionTitleIfEmpty(newSession, q);
+                newSession.messages.push({ role: 'user', text: q, ts: Date.now() });
+                sessions.push(newSession);
+                saveSessions(sessions);
+                setCurrentSessionId(newSession.id);
+                renderHistoryList();
+                session = newSession;
+            } else {
+                setSessionTitleIfEmpty(session, q);
+                session.messages.push({ role: 'user', text: q, ts: Date.now() });
+                session.updatedAt = Date.now();
+                const idx = sessions.findIndex(s => s.id === session.id);
+                sessions[idx] = session;
+                saveSessions(sessions);
+                renderHistoryList();
+            }
+
+            // AI 回复
             const aiEl = appendMessage('', true);
             const mock = generateMockReply(q);
             await typeStream(aiEl, mock);
+
+            // 保存 AI 消息
+            const sessions2 = loadSessions();
+            const s2 = findSessionById(sessions2, getCurrentSessionId());
+            if (s2){
+                s2.messages.push({ role: 'ai', text: mock, ts: Date.now() });
+                s2.updatedAt = Date.now();
+                const idx2 = sessions2.findIndex(x => x.id === s2.id);
+                sessions2[idx2] = s2;
+                saveSessions(sessions2);
+                renderHistoryList();
+            }
         }
 
         formEl?.addEventListener('submit', handleSend);
         document.getElementById('send-btn')?.addEventListener('click', handleSend);
 
-        // 支持从 ?q=... 自动发送，并在有 q 时跳过示例
+        // 历史面板交互
+        historyBtn?.addEventListener('click', () => {
+            const hidden = historyPanelEl.getAttribute('aria-hidden') !== 'false';
+            hidden ? openHistoryPanel() : closeHistoryPanel();
+        });
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            if (!historyPanelEl || !historyBtn) return;
+            if (historyPanelEl.getAttribute('aria-hidden') === 'true') return;
+            if (historyPanelEl.contains(target) || historyBtn.contains(target)) return;
+            closeHistoryPanel();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeHistoryPanel();
+        });
+        historyListEl?.addEventListener('click', (e) => {
+            const li = e.target.closest('.history-item');
+            if (!li) return;
+            const id = li.dataset.id;
+            const sessions = loadSessions();
+            const session = findSessionById(sessions, id);
+            if (session){
+                setCurrentSessionId(session.id);
+                renderSession(session);
+                renderHistoryList();
+                closeHistoryPanel();
+            }
+        });
+
+        // 支持从 ?q=... 自动发送；若存在历史会话则渲染历史，否则播放示例
         (async function init(){
+            renderHistoryList();
+
             const params = new URLSearchParams(window.location.search);
             const q = params.get('q');
             if (q && q.trim()) {
                 inputEl.value = q.trim();
                 await handleSend();
-                // 可选：清理地址栏参数，避免刷新重复发送
                 try {
                     const url = new URL(window.location.href);
                     url.searchParams.delete('q');
                     window.history.replaceState({}, document.title, url.toString());
                 } catch(e) { /* ignore */ }
-                return; // 有 q 就不播示例
+                return;
+            }
+
+            // 若有历史会话，渲染当前或最近一次
+            const sessions = loadSessions();
+            const currentId = getCurrentSessionId();
+            const current = currentId ? findSessionById(sessions, currentId) : null;
+            if (current && current.messages && current.messages.length){
+                renderSession(current);
+                return;
+            }
+            if (!current && sessions.length){
+                const latestId = getLatestSessionId(sessions);
+                const latest = findSessionById(sessions, latestId);
+                if (latest){ setCurrentSessionId(latest.id); renderSession(latest); return; }
             }
 
             // 初始演示对话（假数据）
