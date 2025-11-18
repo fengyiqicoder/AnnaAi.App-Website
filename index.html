@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>安娜AI:绝对保密的心理治疗师</title>
+    <title>安娜AI：开始倾诉一切</title>
     <link rel="icon" href="icon.png" type="image/x-icon">
     <style>
         :root {
@@ -26,18 +26,10 @@
             --space-4: 48px;
             --space-5: 60px;
             --space-6: 72px;
-            --space-7: 84px;
-            --space-8: 96px;
-            --space-9: 108px;
-            --space-10: 120px;
         }
 
         * {
             box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
         }
 
         body {
@@ -46,954 +38,323 @@
             background-color: var(--eggshell);
             color: var(--text-primary);
             display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            scroll-snap-type: y proximity;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        header,
-        main,
-        footer {
-            width: min(1080px, 100% - clamp(var(--space-2), 8vw, var(--space-10)));
-            margin: 0 auto;
+        .page {
+            width: min(1120px, 100% - clamp(var(--space-2), 8vw, var(--space-6)));
+            padding-top: clamp(var(--space-2), 4vh, var(--space-4));
+            padding-bottom: clamp(var(--space-2), 4vh, var(--space-4));
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
         }
 
         header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding-top: clamp(var(--space-2), 6vw, var(--space-6));
-            margin-bottom: clamp(var(--space-4), 10vw, var(--space-8));
+            align-items: center;
+            margin-bottom: clamp(var(--space-2), 3vh, var(--space-3));
         }
 
         .logo {
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            font-size: 1rem;
-            margin-top: var(--space-1);
+            font-weight: 600;
+            letter-spacing: 0.12em;
             color: var(--slate);
+            text-transform: uppercase;
         }
 
         .badge {
             padding: var(--space-0-5) var(--space-1);
             border: 1px solid var(--slate);
             border-radius: 999px;
-            font-size: 0.8rem;
-            margin-top: var(--space-1);
+            font-size: 0.85rem;
             color: var(--slate);
         }
 
         main {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: clamp(var(--space-2), 6vw, var(--space-6));
             flex: 1;
-            margin-bottom: clamp(144px, 20vh, 288px);
-            padding-top: clamp(var(--space-4), 8vw, var(--space-8));
-            padding-bottom: clamp(120px, 18vw, 240px);
-            scroll-snap-align: start;
-        }
-
-        .content {
             display: flex;
             flex-direction: column;
-            gap: var(--space-2);
-            max-width: 456px;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding-bottom: clamp(180px, 20vh, 220px);
         }
 
-        .slogan-label {
+        .hero {
+            max-width: 720px;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+
+        .eyebrow {
             margin: 0;
+            letter-spacing: 0.4em;
             font-size: 0.85rem;
-            letter-spacing: 0.6em;
             color: var(--slate);
         }
 
-        .brand-name {
+        .hero-title {
             margin: 0;
             font-size: clamp(2.8rem, 6vw, 3.6rem);
-            letter-spacing: 4px;
-            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
 
-        .slogan {
-            margin: 0;
-            font-size: clamp(1.5rem, 3.6vw, 1.95rem);
-            line-height: 1.7;
-            color: var(--text-primary);
-        }
-
-        .description {
-            margin: 0;
-            line-height: 1.85;
+        .hero-desc {
+            margin: 0 auto;
+            max-width: 48ch;
+            line-height: 1.8;
             color: var(--text-secondary);
-            max-width: 36ch;
         }
 
-        .cta-form {
+        .hero-actions,
+        .button-link {
+            display: none;
+        }
+
+        .talk-box {
+            position: absolute;
+            left: 50%;
+            bottom: clamp(var(--space-4), 7vh, var(--space-6));
+            transform: translateX(-50%);
+            width: min(560px, calc(100% - 48px));
             display: flex;
-            flex-direction: column;
-            gap: var(--space-2);
-            align-items: flex-start;
-        }
-
-        .footer-cta {
-            margin-bottom: var(--space-2);
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            gap: var(--space-1);
             align-items: center;
-        }
-        .footer-cta .cta-input { width: 100%; }
-        .footer-cta .cta-button { width: auto; }
-
-        .cta-input {
-            width: min(100%, 384px);
-            padding: var(--space-1) var(--space-2);
-            font-size: 1rem;
-            background-color: var(--ivory);
+            gap: var(--space-1);
+            background: #fff;
+            border-radius: 999px;
             border: 1px solid var(--outline);
-            border-radius: 12px;
-            color: var(--text-primary);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            padding: 10px 10px 10px 20px;
+            box-shadow: 0 20px 50px rgba(47, 109, 165, 0.08);
         }
 
-        .cta-input::placeholder {
+        .talk-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .talk-input:focus {
+            outline: none;
+        }
+
+        .talk-input::placeholder {
             color: var(--text-secondary);
             opacity: 0.8;
         }
 
-        .cta-input:focus {
-            outline: none;
-            border-color: var(--blue);
-            box-shadow: 0 0 0 3px rgba(47, 109, 165, 0.15);
-        }
-
-        .cta-button {
-            padding: var(--space-1) var(--space-2);
-            font-size: 1rem;
-            font-weight: 600;
-            color: #ffffff;
-            background-color: var(--blue);
+        .talk-button {
             border: none;
-            border-radius: 12px;
+            border-radius: 999px;
+            background: var(--blue);
+            color: #fff;
+            font-weight: 600;
+            padding: var(--space-1) var(--space-2);
             cursor: pointer;
             transition: background-color 0.2s ease;
         }
 
-        .cta-button:hover,
-        .cta-button:focus {
+        .talk-button:hover,
+        .talk-button:focus-visible {
             background-color: #295985;
+            outline: none;
         }
 
-        .cta-button:focus-visible {
-            outline: 2px solid #295985;
-            outline-offset: 3px;
-        }
-
-        .visual-cluster {
-            position: relative;
-            width: clamp(264px, 32vw, 336px);
-            height: clamp(264px, 32vw, 336px);
+        .dialog-gallery {
+            width: min(960px, 100% - clamp(var(--space-2), 8vw, var(--space-6)));
             display: flex;
-            align-items: center;
             justify-content: center;
         }
 
+        .dialog-stage {
+            width: 100%;
+            min-height: clamp(320px, 48vh, 420px);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+            justify-content: center;
+            padding-block: var(--space-1);
+        }
+
         .bubble {
-            position: absolute;
-            border-radius: 50%;
-            will-change: transform;
-        }
-
-        .bubble--1 {
-            width: 180px;
-            height: 180px;
-            background-color: var(--sage);
-            top: 14%;
-            left: 10%;
-            animation: floatY 6s ease-in-out infinite;
-        }
-
-        .bubble--2 {
-            width: 144px;
-            height: 144px;
-            background-color: var(--blue);
-            top: 0;
-            right: 18%;
-            animation: drift 7s ease-in-out infinite 0.4s;
-        }
-
-        .bubble--3 {
-            width: 120px;
-            height: 120px;
-            background-color: var(--sand);
-            bottom: 18%;
-            right: 0;
-            animation: floatX 8s ease-in-out infinite 0.2s;
-        }
-
-        .bubble--4 {
-            width: 156px;
-            height: 156px;
-            background-color: var(--slate);
-            bottom: 4%;
-            left: 6%;
-            animation: bob 9s ease-in-out infinite 0.6s;
-        }
-
-        .bubble--5 {
-            width: 96px;
-            height: 96px;
-            background-color: var(--silver);
-            top: 45%;
-            left: 38%;
-            animation: drift 6.5s ease-in-out infinite 0.3s;
-        }
-
-        .bubble--6 {
-            width: 216px;
-            height: 216px;
-            border: 6px solid var(--outline);
-            background-color: transparent;
-            top: 8%;
-            right: 6%;
-            animation: pulseRing 10s ease-in-out infinite;
-        }
-
-        @keyframes floatY {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0); }
-        }
-
-        @keyframes floatX {
-            0% { transform: translateX(0); }
-            50% { transform: translateX(12px); }
-            100% { transform: translateX(0); }
-        }
-
-        @keyframes drift {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(8px, -8px) scale(1.03); }
-            100% { transform: translate(0, 0) scale(1); }
-        }
-
-        @keyframes bob {
-            0% { transform: translateY(0) rotate(0); }
-            50% { transform: translateY(-12px) rotate(1deg); }
-            100% { transform: translateY(0) rotate(0); }
-        }
-
-        @keyframes pulseRing {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.04); opacity: .92; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        footer {
-            padding: clamp(96px, 12vh, 168px) 0;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            scroll-snap-align: start;
-        }
-
-        /* Full-height section modules */
-        .full-section {
-            min-height: 100svh;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            scroll-snap-align: start;
-        }
-
-        .section-inner {
-            width: min(1080px, 100% - clamp(var(--space-2), 8vw, var(--space-10)));
-            margin: 0 auto;
-        }
-
-        .section-title {
-            margin: 0 0 var(--space-3) 0;
-            font-size: clamp(1.5rem, 1.2rem + 0.8vw, 2rem);
-            letter-spacing: 0.04em;
-            color: var(--text-primary);
-        }
-
-        /* Live chat demo */
-        .live-demo {
-            /* 更明快的暖色-浅色对比渐变 */
-            background: linear-gradient(135deg, #fdf7ec 0%, #eef6ff 100%);
-        }
-        .live-demo .section-title { color: var(--text-primary); }
-
-        /* Two-column demo layout */
-        .demo-grid {
-            display: grid;
-            grid-template-columns: minmax(320px, 1fr) minmax(420px, 1.2fr);
-            gap: var(--space-3);
-            align-items: stretch;
-        }
-
-        .topic-list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: grid;
-            gap: var(--space-2);
-            align-self: stretch;
-        }
-
-        .topic { display: block; }
-
-        .topic-btn {
-            background: #ffffff;
-            border: 1px solid var(--outline);
-            border-radius: 12px;
-            padding: var(--space-2);
-            text-align: left;
-            cursor: pointer;
-            width: 100%;
-            color: var(--text-primary);
-            transition: background-color .15s ease, border-color .15s ease, transform .15s ease;
-        }
-
-        .topic-btn:hover,
-        .topic-btn:focus-visible {
-            outline: none;
-            border-color: var(--blue);
-            background: #f9fbff;
-            transform: translateY(-1px);
-        }
-
-        .topic-btn[aria-selected="true"] {
-            border-color: var(--blue);
-            box-shadow: 0 0 0 3px rgba(47, 109, 165, 0.15);
-            background: #ffffff;
-        }
-
-        .topic-title {
-            margin: 0 0 var(--space-0-5) 0;
-            font-weight: 800;
-            letter-spacing: 0.02em;
-            font-size: 1.1rem;
-            color: var(--text-primary);
-        }
-
-        .topic-desc {
-            margin: 0;
-            color: var(--text-secondary);
-            line-height: 1.8;
-        }
-
-        .chat-frame {
-            width: 100%;
-            max-width: 720px;
-            margin: 0 0 0 auto;
-            background: #fff;
-            border: 1px solid var(--outline);
-            border-radius: 12px;
-            padding: var(--space-2);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-2);
-            align-self: stretch;
-        }
-
-        .chat-messages {
-            flex: 1;
-            min-height: 320px;
-            max-height: none;
-            overflow-y: auto;
-            padding-right: 2px;
-        }
-
-        /* 增加该部分上下内边距，保证背景覆盖和视觉呼吸感 */
-        .live-demo .section-inner {
-            padding: clamp(var(--space-7), 12vh, var(--space-10)) 0;
-        }
-
-        .chat-list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-1);
-        }
-
-        .msg {
-            display: inline-block;
-            max-width: 80%;
+            max-width: 70%;
             padding: var(--space-1) var(--space-2);
-            border-radius: 12px;
-            line-height: 1.6;
-            white-space: pre-wrap;
+            border-radius: 20px;
+            line-height: 1.7;
             opacity: 0;
-            transform: translateY(6px);
-            animation: msgIn 600ms ease forwards;
-        }
-
-        .chat-input {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: end;
-            gap: var(--space-1);
-            border-top: 1px solid var(--outline);
-            padding-top: var(--space-1);
-        }
-
-        .chat-input-field {
-            width: 100%;
-            padding: var(--space-1) var(--space-2);
-            border: 1px solid var(--outline);
-            border-radius: 12px;
-            background: var(--ivory);
-            color: var(--text-primary);
-            font-size: 1rem;
-            line-height: 1.6;
-            min-height: 44px;
-            max-height: 160px;
-            overflow-y: auto;
-            resize: none;
-        }
-
-        .chat-input-field::placeholder { color: var(--text-secondary); opacity: .8; }
-
-        .send-button {
-            width: 44px;
-            height: 44px;
-            background: var(--blue);
-            color: #fff;
-            border: none;
-            border-radius: 999px;
-            font-weight: 600;
-            cursor: pointer;
-            display: grid;
-            place-items: center;
-            transition: background-color .2s ease, transform .1s ease;
-        }
-
-        .send-button:hover, .send-button:focus { background-color: #295985; }
-        .send-button:active { transform: scale(0.98); }
-
-        .chat-actions-left { display: flex; align-items: center; gap: var(--space-0-5); }
-        .icon-btn {
-            width: 36px;
-            height: 36px;
-            display: grid;
-            place-items: center;
-            border-radius: 999px;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
             background: #fff;
-            border: 1px solid var(--outline);
-            color: var(--slate);
-            cursor: pointer;
-            transition: background-color .15s ease, border-color .15s ease, transform .1s ease;
-        }
-        .icon-btn:hover, .icon-btn:focus-visible { background: #f9fbff; border-color: var(--blue); outline: none; }
-        .icon-btn:active { transform: scale(0.98); }
-        .icon-btn svg { width: 18px; height: 18px; }
-
-        .msg--ai {
-            background: var(--ivory);
-            border: 1px solid var(--outline);
-            color: var(--text-primary);
         }
 
-        .msg--user {
+        .bubble--visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .bubble--user {
+            align-self: flex-end;
             background: var(--blue);
             color: #fff;
             margin-left: auto;
+            text-align: right;
         }
 
-        @keyframes msgIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Stagger message animation */
-        .chat-list .msg:nth-child(1) { animation-delay: .1s; }
-        .chat-list .msg:nth-child(2) { animation-delay: .35s; }
-        .chat-list .msg:nth-child(3) { animation-delay: .6s; }
-        .chat-list .msg:nth-child(4) { animation-delay: .85s; }
-        .chat-list .msg:nth-child(5) { animation-delay: 1.1s; }
-        .chat-list .msg:nth-child(6) { animation-delay: 1.35s; }
-
-        /* Testimonials */
-        .testimonials {
-            background-color: var(--sage);
-        }
-
-        /* Reviews carousel */
-        .review-carousel {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .review-track {
-            display: flex;
-            gap: var(--space-2);
-            transition: transform .4s ease;
-            will-change: transform;
-        }
-
-        .review-card {
-            background: transparent;
-            border: none;
-            border-radius: 16px;
-            padding: calc(var(--space-2) + 4px) var(--space-3);
-            box-shadow: none;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: var(--space-1);
-            position: relative;
-            min-height: 180px;
-            width: 100%;
-        }
-
-        .review-text {
-            margin: 0;
+        .bubble--anna {
+            align-self: flex-start;
+            background: #fff;
             color: var(--text-primary);
-            line-height: 1.9;
-            font-size: clamp(1.15rem, 1.05rem + .4vw, 1.35rem);
-            font-weight: 700;
-            letter-spacing: .01em;
-            position: relative;
+            margin-right: auto;
+            text-align: left;
         }
 
-        .review-meta {
-            margin: 0;
+        footer {
+            position: absolute;
+            left: 50%;
+            bottom: var(--space-1);
+            transform: translateX(-50%);
+            width: min(720px, 100% - clamp(var(--space-2), 8vw, var(--space-6)));
+            text-align: center;
             color: var(--text-secondary);
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-size: 0.9rem;
         }
 
-        /* big quotes decoration */
-        .review-card::before,
-        .review-card::after {
-            content: '“';
-            position: absolute;
-            font-size: clamp(3.6rem, 3rem + 2vw, 6rem);
-            line-height: 1;
-            color: rgba(0,0,0,0.08);
-            pointer-events: none;
-            user-select: none;
-        }
-        .review-card::before {
-            top: -8px;
-            left: 12px;
-        }
-        .review-card::after {
-            content: '”';
-            right: 16px;
-            bottom: -16px;
-        }
-
-        .review-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--blue);
-            color: #fff;
-            border: none;
-            border-radius: 999px;
-            width: 44px;
-            height: 44px;
-            display: grid;
-            place-items: center;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(47,109,165,0.25);
-            transition: transform .15s ease, box-shadow .15s ease, background-color .2s ease;
-        }
-        .review-arrow:hover,
-        .review-arrow:focus-visible {
-            transform: translateY(-50%) scale(1.06);
-            box-shadow: 0 10px 24px rgba(47,109,165,0.3);
-            outline: none;
-            background-color: #295985;
-        }
-        .review-arrow--prev { left: -2px; }
-        .review-arrow--next { right: -2px; }
-
-        /* responsive arrow offsets */
         @media (max-width: 720px) {
-            .review-arrow--prev { left: 4px; }
-            .review-arrow--next { right: 4px; }
-            .review-arrow { width: 40px; height: 40px; }
-        }
-
-        /* one-card per view; constrain width */
-        #review-track { width: 100%; }
-        .review-carousel { max-width: 720px; margin: 0 auto; }
-        .review-track > .review-card { flex: 0 0 100%; }
-
-        /* Responsive tweaks for demo layout */
-        @media (max-width: 960px) {
-            .demo-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .chat-frame {
-                margin: 0;
-            }
-        }
-
-        @media (max-width: 960px) {
             header {
-                margin-bottom: clamp(var(--space-3), 8vw, var(--space-6));
-            }
-
-            main {
                 flex-direction: column;
-                align-items: flex-start;
+                gap: var(--space-1);
             }
 
-            .visual-cluster {
-                align-self: center;
-                margin-top: clamp(var(--space-2), 6vw, var(--space-4));
+            .talk-box {
+                width: min(520px, calc(100% - 32px));
+                flex-direction: column;
+                border-radius: 28px;
+                padding: var(--space-2);
             }
 
-            .cta-input,
-            .cta-button {
+            .talk-button {
                 width: 100%;
             }
-
-            .cta-button {
-                text-align: center;
-            }
-
-            footer {
-                text-align: center;
-                width: min(648px, 100% - clamp(var(--space-2), 8vw, var(--space-10)));
-            }
         }
 
-        @media (min-width: 961px) {
-            body {
-                justify-content: center;
-                gap: 0;
-                padding: 0;
-            }
-
-            header {
-                padding-top: 0;
-                margin-bottom: 0;
-            }
-
-            main {
-                flex: 0 0 auto;
-                padding-bottom: 0;
-            }
-
-            footer {
-                padding-bottom: clamp(var(--space-3), 6vh, var(--space-7));
-            }
-
-            /* 固定聊天面板最小与最大宽度（桌面端） */
-            .chat-frame {
-                width: clamp(420px, 52vw, 600px);
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                transition: none !important;
-            }
-        }
-
-        /* 无障碍隐藏：保留给屏幕阅读器，不占布局 */
         .sr-only {
-            position: absolute !important;
-            width: 1px; height: 1px;
-            padding: 0; margin: -1px;
-            overflow: hidden; clip: rect(0, 0, 0, 0);
-            white-space: nowrap; border: 0;
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            border: 0;
         }
     </style>
 </head>
 <body>
-
+<div class="page">
     <header>
-        <span class="logo">AnnaAI.app</span>
-        <span class="badge">绝对保密
-        </span>
+        <span class="logo">AnnaAI.app / 安娜Ai</span>
+        <span class="badge">绝对保密</span>
     </header>
 
     <main>
-        <section class="content">
-            <p class="slogan-label">Anna</p>
-            <h1 class="brand-name">安娜AI</h1>
-            <p class="slogan">一个绝对保密的心理治疗师。</p>
-            <p class="description">
-                邀请你把心里的难题交给值得信赖的伙伴。AnnaAI 以严密守护为前提，帮助你在安全、匿名的对话中听见自己。
-            </p>
-            <form class="cta-form" id="hero-cta-form" onsubmit="return false;">
-                <label for="question" class="sr-only">向 AnnaAI 提问</label>
-                <input id="question" type="text" class="cta-input" placeholder="在这里输入你想得到答案的问题…">
-                <button type="submit" class="cta-button">开始对话</button>
-            </form>
+        <section class="dialog-gallery" aria-label="Anna 的对话案例">
+            <div class="dialog-stage" aria-live="polite">
+                <p class="bubble bubble--anna" id="bubble-anna"></p>
+                <p class="bubble bubble--user" id="bubble-user"></p>
+            </div>
         </section>
-
-        <aside class="visual-cluster" aria-hidden="true">
-            <span class="bubble bubble--1"></span>
-            <span class="bubble bubble--2"></span>
-            <span class="bubble bubble--3"></span>
-            <span class="bubble bubble--4"></span>
-            <span class="bubble bubble--5"></span>
-        </aside>
     </main>
 
-    <section class="full-section live-demo" id="live-chat">
-        <div class="section-inner">
-            <h2 class="section-title">解答你的问题</h2>
-            <div class="demo-grid">
-                <ul class="topic-list" role="tablist" aria-label="常见困扰">
-                    <li class="topic" role="presentation">
-                        <button class="topic-btn" role="tab" aria-selected="true" aria-controls="reply-panel" data-reply="我听见你在描述一种长时间的情感透支。先别急着做最终决定，我们可以把当前的关系状态拆成“相处方式 / 冲突触发点 / 边界与期待”三部分逐一梳理。通常当我们看清哪些是可以调整的、哪些是需要谈判的，压迫感就会下降。你更愿意先从哪一部分开始？"> 
-                            <p class="topic-title">感情困扰</p>
-                            <p class="topic-desc">“我和妻子相处越来越像室友，既怕提离婚又怕继续耗下去，我该怎么处理这种情感疲惫感？”</p>
-                        </button>
-                    </li>
-                    <li class="topic" role="presentation">
-                        <button class="topic-btn" role="tab" aria-selected="false" aria-controls="reply-panel" data-reply="你背负了多重责任，难怪会持续紧张。我们可以做一个三步减压：1）把无法立即改变的项与可行动项区分开；2）为可行动项设定最小动作与最差情景预案；3）在每天固定时段做5分钟的‘担忧时间’，其余时间把担忧临时寄存。愿意先列出你最担心的前三项吗？">
-                            <p class="topic-title">经济压力</p>
-                            <p class="topic-desc">“房贷、孩子教育和父母养老都压在我身上，每天都想着‘如果哪天失业怎么办’，这种持续焦虑能缓解吗？”</p>
-                        </button>
-                    </li>
-                    <li class="topic" role="presentation">
-                        <button class="topic-btn" role="tab" aria-selected="false" aria-controls="reply-panel" data-reply="当‘意义感’降低时，人会本能地怀疑一切。我们可以先从‘当下带来一点点活力的事情’入手，哪怕是十分之一个单位。接着回顾你这些年做成的三件微小但真实的事，把它们连接到你在乎的价值。等你准备好，我们再探索下一小步。">
-                            <p class="topic-title">意义迷茫</p>
-                            <p class="topic-desc">“工作十几年后发现自己除了赚钱好像什么都没有留下，我常问自己‘活着到底是为了什么’，这种空虚感正常吗？”</p>
-                        </button>
-                    </li>
-                    <li class="topic" role="presentation">
-                        <button class="topic-btn" role="tab" aria-selected="false" aria-controls="reply-panel" data-reply="孤独并不等于‘你有问题’，它更像是一种需要被照顾的信号。我们可以先尝试两条轻量路径：一是把‘独处时间’从被动变为主动，安排一个你能享受的小仪式；二是练习‘一小步连接’，例如给一位可信的人发一句近况。等你愿意，我们也可以一起找到更稳定的连接方式。现在，对你来说最容易开始的是哪一小步？">
-                            <p class="topic-title">孤独感</p>
-                            <p class="topic-desc">“明明身边有同事朋友，但下班回家就很空，越发觉得没人真正懂我。这样的孤独感怎么办？”</p>
-                        </button>
-                    </li>
-                </ul>
-
-                <div class="chat-frame" role="tabpanel" id="reply-panel" aria-live="polite" aria-label="Anna 的回复">
-                    <div class="chat-messages">
-                        <ul class="chat-list" id="reply-list"></ul>
-                    </div>
-                    <form class="cta-form footer-cta" id="live-cta-form" onsubmit="return false;">
-                        <label for="live-cta-input" class="sr-only">向 AnnaAI 提问</label>
-                        <input id="live-cta-input" type="text" class="cta-input" placeholder="在这里输入你想得到答案的问题…">
-                        <button type="submit" class="cta-button" id="live-cta-button">开始对话</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="full-section testimonials" id="testimonials">
-        <div class="section-inner">
-            <h2 class="section-title">用户评论</h2>
-            <div class="review-carousel">
-                <div class="review-track" id="review-track">
-                    <article class="review-card">
-                        <p class="review-text">像和懂心理的朋友聊天。每次聊完都更能听见自己。</p>
-                        <p class="review-meta">小林 · 产品经理</p>
-                    </article>
-                    <article class="review-card">
-                        <p class="review-text">我在这儿说出了从未敢说的话，没有被评判，只有被理解。</p>
-                        <p class="review-meta">J. Wang · 自由职业者</p>
-                    </article>
-                    <article class="review-card">
-                        <p class="review-text">节奏很温和，但又有方向感，真的能把复杂情绪拆开来看。</p>
-                        <p class="review-meta">Cynthia · 运营</p>
-                    </article>
-                </div>
-            </div>
-        </div>
-    </section>
+    <form class="talk-box" id="talk-form" onsubmit="return false;">
+        <label for="talk-input" class="sr-only">向 Anna 倾诉</label>
+        <input id="talk-input" class="talk-input" type="text" placeholder="开始倾诉一切">
+        <button type="submit" class="talk-button">开始对话</button>
+    </form>
 
     <footer>
-        <form class="cta-form footer-cta" id="footer-cta-form" onsubmit="return false;">
-            <input id="footer-chat-question" class="cta-input" type="text" placeholder="在这里输入你想和 Anna 说的话…">
-            <button class="cta-button" id="footer-send-button" type="submit">开始对话</button>
-        </form>
-        AnnaAI 不需要登录，不记录任何用户数据。安全感来自每一次被理解的瞬间。
+        AnnaAI.app 不需要登录，不记录任何用户数据。安全感源自每一次被理解的瞬间。
     </footer>
+</div>
 
-    <script>
-    (function() {
-        const listEl = document.getElementById('reply-list');
-        const tabs = document.querySelectorAll('.topic-btn');
-        const form = document.getElementById('chat-form');
-        const input = document.getElementById('chat-question');
+<script>
+(function(){
+    const talkForm = document.getElementById('talk-form');
+    const talkInput = document.getElementById('talk-input');
 
-        // Hero CTA elements
-        const heroForm = document.getElementById('hero-cta-form');
-        const heroInput = document.getElementById('question');
+    function redirectToChat(text){
+        const value = (text || '').trim();
+        const query = value ? ('?q=' + encodeURIComponent(value)) : '';
+        window.location.href = 'chat.html' + query;
+    }
 
-        // Live CTA elements (统一与顶部行为)
-        const liveCtaForm = document.getElementById('live-cta-form');
-        const liveCtaInput = document.getElementById('live-cta-input');
-        const liveCtaBtn = document.getElementById('live-cta-button');
+    talkForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        redirectToChat(talkInput?.value || '');
+    });
+})();
 
-        let typingController = null;
+(function(){
+    const userBubble = document.getElementById('bubble-user');
+    const annaBubble = document.getElementById('bubble-anna');
+    if(!userBubble || !annaBubble) return;
 
-        function clearReplies() {
-            listEl.innerHTML = '';
+    const scenarios = [
+        {
+            user: '“我怕把真实想法告诉伴侣，会让关系更疏远。”',
+            anna: 'Anna：害怕冲突通常代表你珍惜这段关系。我们可以把想说的话按安全程度排个顺序，只挑最安全的一句演练表达，你愿意试试吗？'
+        },
+        {
+            user: '“工作像没有尽头，我常常忘记怎么放松。”',
+            anna: 'Anna：别急着找完美答案。把一天拆成三个时段，用 0-3 记录能量，挑最低的那格塞进 10 分钟的卸压仪式，我们先让身体记住“可以停一下”。'
+        },
+        {
+            user: '“越长大越觉得自己没什么价值，谁都可以取代我。”',
+            anna: 'Anna：价值感来自一连串细小体验。写下这周你完成的三件真实小事，并记录它们对谁产生了作用，我们再一起把它们和你在乎的价值串起来。'
         }
+    ];
 
-        function appendMessage(text, isAI) {
-            const li = document.createElement('li');
-            li.className = 'msg ' + (isAI ? 'msg--ai' : 'msg--user');
-            li.textContent = text;
-            listEl.appendChild(li);
-            listEl.parentElement.scrollTop = listEl.parentElement.scrollHeight;
-            return li;
+    function wait(ms){ return new Promise(resolve => setTimeout(resolve, ms)); }
+
+    function reveal(element){
+        if(!element.classList.contains('bubble--visible')){
+            element.classList.add('bubble--visible');
         }
+    }
 
-        async function typeStream(targetEl, fullText, chunk = 2, delay = 40) {
-            if (typingController) typingController.abort();
-            typingController = new AbortController();
-            const { signal } = typingController;
-
-            targetEl.textContent = '';
-            let i = 0;
-            while (i < fullText.length) {
-                if (signal.aborted) return;
-                targetEl.textContent += fullText.slice(i, i + chunk);
-                i += chunk;
-                await new Promise(r => setTimeout(r, delay));
-            }
+    async function typeInto(element, text, speed = 24){
+        reveal(element);
+        element.textContent = '';
+        for (const char of text){
+            element.textContent += char;
+            await wait(speed);
         }
+    }
 
-        function updatePressed(current) {
-            tabs.forEach(btn => btn.setAttribute('aria-selected', btn === current ? 'true' : 'false'));
-        }
+    async function playScenario(data){
+        await typeInto(userBubble, data.user);
+        await wait(300);
+        await typeInto(annaBubble, data.anna);
+        await wait(1600);
+    }
 
-        tabs.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const reply = btn.getAttribute('data-reply') || '';
-                updatePressed(btn);
-                clearReplies();
-                // echo user question
-                const userDesc = btn.querySelector('.topic-desc')?.textContent?.trim() || '';
-                appendMessage(userDesc, false);
-                // streamed AI reply
-                const aiEl = appendMessage('', true);
-                typeStream(aiEl, reply);
-            });
-        });
-
-        // auto-init with first tab (skip if landing here with q param)
-        (function(){
-            const hasQ = new URLSearchParams(window.location.search).get('q');
-            if (!hasQ) {
-                const first = document.querySelector('.topic-btn[aria-selected="true"]');
-                if (first) first.click();
-            }
-        })();
-
-        // IM 输入发送
-        function sanitized(text){
-            return text.replace(/\s+/g, ' ').trim();
-        }
-
-        async function handleSend(){
-            const q = sanitized(input.value);
-            if(!q) return;
-            appendMessage(q, false);
-            input.value = '';
-            autoGrow(input);
-            const aiEl = appendMessage('', true);
-            const mock = '我已收到你的问题。先从可被描述的事实入手，再到你的感受与担心，最后一起找一个今天就能迈出的最小行动。';
-            await typeStream(aiEl, mock);
-        }
-
-        function autoGrow(el){
-            if(!el) return;
-            el.style.height = 'auto';
-            const next = Math.min(160, Math.max(44, el.scrollHeight));
-            el.style.height = next + 'px';
-        }
-
-        // 支持 Enter 发送，Shift+Enter 换行
-        input?.addEventListener('keydown', (e) => {
-            if(e.key === 'Enter' && !e.shiftKey){
-                e.preventDefault();
-                handleSend();
-            }
-        });
-        input?.addEventListener('input', () => autoGrow(input));
-
-        form?.addEventListener('submit', handleSend);
-        document.getElementById('send-button')?.addEventListener('click', handleSend);
-
-        // Footer quick start → jump to chat.html with message
-        const footerForm = document.getElementById('footer-cta-form');
-        const footerInput = document.getElementById('footer-chat-question');
-        const footerSend = document.getElementById('footer-send-button');
-        function redirectToChat(text){
-            // 允许空输入也跳转
-            const q = (text ?? '').toString();
-            const query = q.trim() ? ('?q=' + encodeURIComponent(q.trim())) : '';
-            window.location.href = 'chat.html' + query;
-        }
-        function handleFooterSend(){
-            redirectToChat(footerInput?.value || '');
-        }
-        footerForm?.addEventListener('submit', handleFooterSend);
-        footerSend?.addEventListener('click', handleFooterSend);
-
-        // Hero CTA → jump to chat.html with message
-        function handleHeroSend(){
-            redirectToChat(heroInput?.value || '');
-        }
-        heroForm?.addEventListener('submit', function(e){ e.preventDefault(); handleHeroSend(); });
-        // Also bind click on the hero button for robustness
-        heroForm?.querySelector('.cta-button')?.addEventListener('click', handleHeroSend);
-
-        // Live CTA → jump to chat.html with message
-        function handleLiveCtaSend(){
-            redirectToChat(liveCtaInput?.value || '');
-        }
-        liveCtaForm?.addEventListener('submit', function(e){ e.preventDefault(); handleLiveCtaSend(); });
-        liveCtaBtn?.addEventListener('click', handleLiveCtaSend);
-    })();
-
-    // Reviews carousel interactions
-    (function(){
-        const track = document.getElementById('review-track');
-        if(!track) return;
-
-        const cards = Array.from(track.children);
-        const total = cards.length;
+    async function loopScenarios(){
         let index = 0;
-        let timer = null;
-
-        function update(){
-            const offset = -index * 100;
-            track.style.transform = `translateX(${offset}%)`;
+        while(true){
+            await playScenario(scenarios[index]);
+            index = (index + 1) % scenarios.length;
         }
+    }
 
-        function goNext(){ index = (index + 1) % total; update(); }
-
-        function startAuto(){
-            stopAuto();
-            timer = setInterval(goNext, 4000);
-        }
-        function stopAuto(){ if(timer) { clearInterval(timer); timer = null; } }
-
-        // Pause on hover for better UX
-        track.parentElement.addEventListener('mouseenter', stopAuto);
-        track.parentElement.addEventListener('mouseleave', startAuto);
-
-        // Resize correction to avoid fractional widths
-        window.addEventListener('resize', update);
-
-        update();
-        startAuto();
-    })();
-    </script>
-
+    loopScenarios();
+})();
+</script>
 </body>
 </html>
