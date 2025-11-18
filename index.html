@@ -184,6 +184,13 @@
             padding-block: var(--space-1);
         }
 
+        .flow-lines {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+
         .bubble {
             max-width: 70%;
             padding: var(--space-1) var(--space-2);
@@ -267,8 +274,7 @@
     <main>
         <section class="dialog-gallery" aria-label="Anna 的对话案例">
             <div class="dialog-stage" aria-live="polite">
-                <p class="bubble bubble--anna" id="bubble-anna"></p>
-                <p class="bubble bubble--user" id="bubble-user"></p>
+                <div class="flow-lines" id="flow-lines"></div>
             </div>
         </section>
     </main>
@@ -302,9 +308,8 @@
 })();
 
 (function(){
-    const userBubble = document.getElementById('bubble-user');
-    const annaBubble = document.getElementById('bubble-anna');
-    if(!userBubble || !annaBubble) return;
+    const flowLines = document.getElementById('flow-lines');
+    if(!flowLines) return;
 
     const scenarios = [
         {
@@ -323,14 +328,16 @@
 
     function wait(ms){ return new Promise(resolve => setTimeout(resolve, ms)); }
 
-    function reveal(element){
-        if(!element.classList.contains('bubble--visible')){
-            element.classList.add('bubble--visible');
-        }
+    function createBubble(role){
+        const bubble = document.createElement('p');
+        bubble.className = `bubble bubble--${role}`;
+        bubble.textContent = '';
+        flowLines.appendChild(bubble);
+        requestAnimationFrame(() => bubble.classList.add('bubble--visible'));
+        return bubble;
     }
 
-    async function typeInto(element, text, speed = 24){
-        reveal(element);
+    async function typeInto(element, text, speed = 40){
         element.textContent = '';
         for (const char of text){
             element.textContent += char;
@@ -339,21 +346,21 @@
     }
 
     async function playScenario(data){
+        const userBubble = createBubble('user');
         await typeInto(userBubble, data.user);
-        await wait(300);
+        await wait(400);
+        const annaBubble = createBubble('anna');
         await typeInto(annaBubble, data.anna);
-        await wait(1600);
+        await wait(1400);
     }
 
-    async function loopScenarios(){
-        let index = 0;
-        while(true){
-            await playScenario(scenarios[index]);
-            index = (index + 1) % scenarios.length;
+    async function playAll(){
+        for (const scenario of scenarios){
+            await playScenario(scenario);
         }
     }
 
-    loopScenarios();
+    playAll();
 })();
 </script>
 </body>
