@@ -46,18 +46,21 @@
         .page {
             width: min(1120px, 100% - clamp(var(--space-2), 8vw, var(--space-6)));
             padding-top: clamp(var(--space-2), 4vh, var(--space-4));
-            padding-bottom: clamp(var(--space-2), 4vh, var(--space-4));
+            /* padding-bottom removed to let flex layout handle it */
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 100vh; /* Fallback */
+            height: 100dvh;
             position: relative;
+            margin: 0 auto;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: clamp(var(--space-2), 3vh, var(--space-3));
+            margin-bottom: clamp(var(--space-1), 2vh, var(--space-3));
+            flex-shrink: 0;
         }
 
         .logo {
@@ -79,10 +82,23 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            /* justify-content: center; removed to allow scrolling from top if needed, or keep centered if content is small */
+            justify-content: flex-start; 
             align-items: center;
             text-align: center;
-            padding-bottom: clamp(180px, 20vh, 220px);
+            overflow-y: auto;
+            padding-bottom: var(--space-2);
+            /* Custom scrollbar hiding */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE 10+ */
+            
+            /* Smooth fading at the top */
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40px, black calc(100% - 20px), transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 40px, black calc(100% - 20px), transparent 100%);
+        }
+        
+        main::-webkit-scrollbar { 
+            display: none;  /* Chrome Safari */
         }
 
         .hero {
@@ -90,6 +106,8 @@
             display: flex;
             flex-direction: column;
             gap: var(--space-1);
+            margin-top: auto;
+            margin-bottom: auto;
         }
 
         .eyebrow {
@@ -117,29 +135,50 @@
             display: none;
         }
 
+        .bottom-section {
+            flex-shrink: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: clamp(var(--space-2), 4vh, var(--space-4));
+            background: linear-gradient(to top, var(--eggshell) 90%, rgba(244, 243, 227, 0));
+            z-index: 10;
+        }
+
         .talk-box {
-            position: absolute;
-            left: 50%;
-            bottom: clamp(var(--space-4), 7vh, var(--space-6));
-            transform: translateX(-50%);
-            width: min(560px, calc(100% - 48px));
+            position: relative;
+            width: min(600px, 100%);
             display: flex;
             align-items: center;
             gap: var(--space-1);
             background: #fff;
+            border-radius: 24px; /* Slightly less rounded for a modern look, or keep pill */
             border-radius: 999px;
-            border: 1px solid var(--outline);
-            padding: 10px 10px 10px 20px;
-            box-shadow: 0 20px 50px rgba(47, 109, 165, 0.08);
+            border: 1px solid rgba(47, 109, 165, 0.15);
+            padding: 8px 8px 8px 24px;
+            box-shadow: 
+                0 4px 20px rgba(47, 109, 165, 0.06),
+                0 1px 3px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .talk-box:focus-within {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 12px 32px rgba(47, 109, 165, 0.12),
+                0 2px 8px rgba(47, 109, 165, 0.04);
+            border-color: rgba(47, 109, 165, 0.3);
         }
 
         .talk-input {
             flex: 1;
             border: none;
             background: transparent;
-            font-size: 1rem;
+            font-size: 1.05rem;
             color: var(--text-primary);
             font-family: inherit;
+            padding: 8px 0;
         }
 
         .talk-input:focus {
@@ -148,7 +187,7 @@
 
         .talk-input::placeholder {
             color: var(--text-secondary);
-            opacity: 0.8;
+            opacity: 0.6;
         }
 
         .talk-button {
@@ -157,9 +196,11 @@
             background: var(--blue);
             color: #fff;
             font-weight: 600;
-            padding: var(--space-1) var(--space-2);
+            padding: 12px 28px;
+            font-size: 1rem;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            flex-shrink: 0;
         }
 
         .talk-button:hover,
@@ -167,39 +208,71 @@
             background-color: #295985;
             outline: none;
         }
+        
+        .talk-button:active {
+            transform: scale(0.96);
+        }
 
         .dialog-gallery {
-            width: min(960px, 100% - clamp(var(--space-2), 8vw, var(--space-6)));
+            width: min(960px, 100%);
             display: flex;
             justify-content: center;
+            /* margin-top: auto; removed to allow better flow */
+            margin-bottom: var(--space-2);
         }
 
         .dialog-stage {
             width: 100%;
-            min-height: clamp(320px, 48vh, 420px);
+            /* min-height removed to let it grow naturally */
             display: flex;
             flex-direction: column;
             gap: var(--space-1);
-            justify-content: center;
+            justify-content: flex-end; /* Bubbles start from bottom if space allows */
             padding-block: var(--space-1);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s ease;
+        }
+
+        .dialog-stage.exit {
+            transform: translateY(-100vh); /* Move up off screen */
+            opacity: 0;
+        }
+
+        .real-chat {
+            width: 100%;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            gap: var(--space-2);
+            padding-top: var(--space-2);
+        }
+
+        .real-chat.active {
+            display: flex;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .flow-lines {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: var(--space-1);
+            gap: var(--space-2); /* Increased gap for better readability */
         }
 
         .bubble {
-            max-width: 70%;
-            padding: var(--space-1) var(--space-2);
-            border-radius: 20px;
-            line-height: 1.7;
+            max-width: 85%;
+            padding: 16px 24px;
+            border-radius: 24px;
+            line-height: 1.6;
             opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: translateY(20px);
+            transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
             background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            font-size: 1.05rem;
         }
 
         .bubble--visible {
@@ -213,6 +286,7 @@
             color: #fff;
             margin-left: auto;
             text-align: right;
+            border-bottom-right-radius: 4px;
         }
 
         .bubble--anna {
@@ -221,34 +295,60 @@
             color: var(--text-primary);
             margin-right: auto;
             text-align: left;
+            border-bottom-left-radius: 4px;
+            border: 1px solid var(--outline);
         }
 
         footer {
-            position: absolute;
-            left: 50%;
-            bottom: var(--space-1);
-            transform: translateX(-50%);
-            width: min(720px, 100% - clamp(var(--space-2), 8vw, var(--space-6)));
+            width: min(720px, 100%);
             text-align: center;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            margin-top: var(--space-2);
+            opacity: 0.8;
+            line-height: 1.5;
         }
 
         @media (max-width: 720px) {
+            .page {
+                width: 100%;
+                padding: clamp(var(--space-2), 2vh, var(--space-3));
+                padding-bottom: 0; /* Reset */
+            }
+
             header {
-                flex-direction: column;
-                gap: var(--space-1);
+                margin-bottom: var(--space-2);
+            }
+
+            .bottom-section {
+                padding-bottom: var(--space-2);
             }
 
             .talk-box {
-                width: min(520px, calc(100% - 32px));
-                flex-direction: column;
-                border-radius: 28px;
-                padding: var(--space-2);
+                width: 100%;
+                /* On mobile, keep it row to save vertical space, or column if needed */
+                /* Let's try row for mobile too for compactness */
+                padding: 6px 6px 6px 16px;
+            }
+
+            .talk-input {
+                font-size: 16px; /* Prevent zoom on iOS */
             }
 
             .talk-button {
-                width: 100%;
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+
+            .bubble {
+                max-width: 90%;
+                padding: 14px 18px;
+                font-size: 1rem;
+            }
+            
+            footer {
+                font-size: 0.75rem;
+                padding: 0 var(--space-1);
             }
         }
 
@@ -273,37 +373,102 @@
 
     <main>
         <section class="dialog-gallery" aria-label="Anna 的对话案例">
-            <div class="dialog-stage" aria-live="polite">
+            <div class="dialog-stage" id="demo-stage" aria-live="polite">
                 <div class="flow-lines" id="flow-lines"></div>
             </div>
+            <div class="real-chat" id="real-chat" aria-live="polite"></div>
         </section>
     </main>
 
-    <form class="talk-box" id="talk-form" onsubmit="return false;">
-        <label for="talk-input" class="sr-only">向 Anna 倾诉</label>
-        <input id="talk-input" class="talk-input" type="text" placeholder="开始倾诉一切">
-        <button type="submit" class="talk-button">开始对话</button>
-    </form>
+    <div class="bottom-section">
+        <form class="talk-box" id="talk-form" onsubmit="return false;">
+            <label for="talk-input" class="sr-only">向 Anna 倾诉</label>
+            <input id="talk-input" class="talk-input" type="text" placeholder="开始倾诉一切">
+            <button type="submit" class="talk-button">发送</button>
+        </form>
 
-    <footer>
-        AnnaAI.app 不需要登录，不记录任何用户数据。安全感源自每一次被理解的瞬间。
-    </footer>
+        <footer>
+            AnnaAI.app 不需要登录，不记录任何用户数据。安全感源自每一次被理解的瞬间。
+        </footer>
+    </div>
 </div>
 
 <script>
 (function(){
     const talkForm = document.getElementById('talk-form');
     const talkInput = document.getElementById('talk-input');
+    const demoStage = document.getElementById('demo-stage');
+    const realChat = document.getElementById('real-chat');
+    const mainEl = document.querySelector('main');
+    
+    let isChatStarted = false;
 
-    function redirectToChat(text){
-        const value = (text || '').trim();
-        const query = value ? ('?q=' + encodeURIComponent(value)) : '';
-        window.location.href = 'chat.html' + query;
+    // 简单的 Mock API 回复
+    function mockApiReply(text) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(`Anna：我听到了你的声音，“${text}”。这似乎对你很重要。能多跟我说说这种感觉吗？我们一起看看背后藏着什么。`);
+            }, 1500); // 模拟网络延迟
+        });
+    }
+
+    function createChatBubble(text, isUser) {
+        const bubble = document.createElement('div');
+        bubble.className = `bubble ${isUser ? 'bubble--user' : 'bubble--anna'} bubble--visible`;
+        bubble.textContent = text;
+        return bubble;
+    }
+
+    function scrollToBottom() {
+        // 滚动到底部
+        mainEl.scrollTop = mainEl.scrollHeight;
+    }
+
+    async function handleSend() {
+        const text = talkInput.value.trim();
+        if (!text) return;
+
+        // 清空输入框
+        talkInput.value = '';
+        talkInput.blur(); // 收起键盘/焦点，或者保持焦点看需求，这里先保持流畅暂不blur? 还是blur好？
+        // 保持焦点体验更好
+        talkInput.focus();
+
+        if (!isChatStarted) {
+            isChatStarted = true;
+            // 1. 隐藏 Demo
+            demoStage.classList.add('exit');
+            
+            // 2. 显示真实聊天区域
+            // 等待一小会儿让动画开始
+            setTimeout(() => {
+                demoStage.style.display = 'none'; // 彻底移除占位
+                realChat.classList.add('active');
+            }, 600); 
+        }
+
+        // 添加用户消息
+        const userBubble = createChatBubble(text, true);
+        realChat.appendChild(userBubble);
+        scrollToBottom();
+
+        // 模拟 AI 思考/输入中 (可选: 加个 loading 气泡)
+        // ...
+
+        // 调用 Mock API
+        try {
+            const replyText = await mockApiReply(text);
+            const aiBubble = createChatBubble(replyText, false);
+            realChat.appendChild(aiBubble);
+            scrollToBottom();
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     talkForm?.addEventListener('submit', (event) => {
         event.preventDefault();
-        redirectToChat(talkInput?.value || '');
+        handleSend();
     });
 })();
 
